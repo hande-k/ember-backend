@@ -20,5 +20,8 @@ public class Book {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @Column
+    private Long upvotes;
 }
 
