@@ -1,5 +1,14 @@
 package model;
 
-public class Project {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
+@Entity
+public class Project {
+    @Id
+    private String id;
+    private String title;
+    @ManyToOne
+    private User owner;
 }
