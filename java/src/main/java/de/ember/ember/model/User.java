@@ -29,6 +29,27 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private String name;
+
+    @Column
+    private String surname;
+
+    @Column
+    private Integer age;
+
+    @Column
+    private String city;
+
+    @Column
+    private String genresLikeToRead;
+
+    @Column
+    private String genresLikeToListen;
+
+    @Column
+    private String genresLikeToWrite;
+
     // UserDetails methods (keeping it simple)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
