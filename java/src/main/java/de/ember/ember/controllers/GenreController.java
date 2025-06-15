@@ -1,6 +1,7 @@
 package de.ember.ember.controllers;
 
 import de.ember.ember.model.Genre;
+import de.ember.ember.model.dto.GenreDTO;
 import de.ember.ember.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,14 @@ public class GenreController {
 
     @PostMapping("/create")
     public ResponseEntity<Genre> createGenre(@RequestBody Genre genre) {
+        return ResponseEntity.ok(genreService.save(genre));
+    }
+
+    @PostMapping
+    public ResponseEntity<Genre> createGenre(@RequestBody GenreDTO genreDTO){
+        Genre genre = new Genre();
+        genre.setGenreName(genreDTO.genreName());
+        genre.setDefaultVoiceActor(null);
         return ResponseEntity.ok(genreService.save(genre));
     }
 
