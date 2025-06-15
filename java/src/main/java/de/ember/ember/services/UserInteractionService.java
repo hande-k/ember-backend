@@ -1,5 +1,6 @@
 package de.ember.ember.services;
 
+import de.ember.ember.model.User;
 import de.ember.ember.model.UserInteraction;
 import de.ember.ember.repositories.UserInteractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +36,12 @@ public class UserInteractionService {
                 .filter(interaction -> interaction.getUser().getId().equals(userId))
                 .collect(Collectors.toList());
     }
+
+    public List<User> findAuthorsByBookId(Long bookId) {
+        return userInteractionRepository.findByBook_BookIdAndAction(bookId, UserInteraction.ActionType.WRITE)
+                .stream()
+                .map(UserInteraction::getUser)
+                .collect(Collectors.toList());
+    }
+
 }

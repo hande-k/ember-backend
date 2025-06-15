@@ -1,5 +1,6 @@
 package de.ember.ember.controllers;
 
+import de.ember.ember.model.User;
 import de.ember.ember.model.UserInteraction;
 import de.ember.ember.services.UserInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class UserInteractionController {
     public ResponseEntity<Void> deleteInteraction(@PathVariable Long id) {
         userInteractionService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/authors/{bookId}")
+    public List<User> getAuthorsByBookId(@PathVariable Long bookId) {
+        return userInteractionService.findAuthorsByBookId(bookId);
     }
 
     @GetMapping("/all")

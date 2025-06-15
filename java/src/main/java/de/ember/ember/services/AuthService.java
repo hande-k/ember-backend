@@ -24,11 +24,20 @@ public class AuthService {
         var user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .name(request.getName())
+                .surname(request.getSurname())
+                .age(request.getAge())
+                .city(request.getCity())
+                .genresLikeToRead(request.getGenresLikeToRead())
+                .genresLikeToListen(request.getGenresLikeToListen())
+                .genresLikeToWrite(request.getGenresLikeToWrite())
                 .build();
+
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return LoginResponse.builder().token(jwtToken).build();
     }
+
 
     public LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(
