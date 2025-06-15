@@ -157,6 +157,15 @@ export default function Index() {
           </div>
         </section>
 
+
+
+        <button
+          className="fixed bottom-8 right-8 p-4 rounded-full bg-blue-600 text-white shadow-lg"
+          onClick={handleClick}
+        >
+          <Plus size={32} />
+        </button>
+
       </main>
 
       <Footer />
