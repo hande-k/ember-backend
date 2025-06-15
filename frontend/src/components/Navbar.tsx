@@ -5,19 +5,14 @@ import { cn } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 import LanguageSelector from "./LanguageSelector";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import axios from "axios";
 import { useLanguage } from "@/contexts/LanguageContext";
+import LoginModal from "@/components/LoginModal";
 
 export default function Navbar() {
   const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
 
   const navLinks = [
     { name: t.nav.home, path: "/" },
@@ -37,26 +32,6 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scrolled]);
-
-  const handleLogin = async () => {
-    setLoading(true);
-    setLoginError(null);
-    try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
-        username,
-        password,
-      });
-      console.log(response.data); // Hier ggf. Token speichern
-      setLoginModalOpen(false);
-      setUsername("");
-      setPassword("");
-    } catch (error: any) {
-      console.error(error);
-      setLoginError("Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <>
@@ -86,7 +61,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-2">
             <ThemeToggle />
             <Button className="btn-primary" onClick={() => setLoginModalOpen(true)}>
-              Login
+              Sign In/Up
             </Button>
           </div>
 
@@ -126,7 +101,7 @@ export default function Navbar() {
               </div>
 
               <Button className="w-full btn-primary mt-6" onClick={() => { setMobileMenuOpen(false); setLoginModalOpen(true); }}>
-                Login
+                Sign In/Up
               </Button>
             </div>
           </div>
@@ -134,24 +109,7 @@ export default function Navbar() {
       </header>
 
       {/* Login Modal */}
-      {loginModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-card p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-2xl font-semibold mb-4">Login</h2>
-            <div className="space-y-4">
-              <Input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-              <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-              {loginError && <div className="text-red-500 text-sm">{loginError}</div>}
-              <Button className="w-full btn-primary" onClick={handleLogin} disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
-              </Button>
-              <Button className="w-full mt-2" variant="outline" onClick={() => setLoginModalOpen(false)}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <LoginModal open={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
     </>
   );
 }

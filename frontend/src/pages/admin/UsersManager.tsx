@@ -1,26 +1,47 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { adminApi } from "@/api/adminApi";
 
 export default function UsersManager() {
   const [users, setUsers] = useState([]);
+  const [newUser, setNewUser] = useState({ username: "", password: "" });
 
   const fetchUsers = async () => {
-    const res = await axios.get("http://localhost:8080/api/user/all");
-    setUsers(res.data);
+    const data = await adminApi.users.list();
+    setUsers(data);
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
+  const handleCreate = async () => {
+    await adminApi.users.create(newUser);
+    setNewUser({ username: "", password: "" });
+    fetchUsers();
+  };
+
   const handleDelete = async (id: number) => {
-    await axios.delete(`http://localhost:8080/api/user/delete/${id}`);
+    await adminApi.users.delete(id);
     fetchUsers();
   };
 
   return (
     <div style={{ padding: 20 }}>
       <h1>Users Admin</h1>
+      <div>
+        <input
+          placeholder="Username"
+          value={newUser.username}
+          onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={newUser.password}
+          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+        />
+        <button onClick={handleCreate}>Add User</button>
+      </div>
 
       <table>
         <thead><tr><th>ID</th><th>Username</th><th>Delete</th></tr></thead>
