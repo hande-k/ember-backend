@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { adminApi } from "@/api/adminApi";
+import { redirect } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 export default function WritePage() {
   const [title, setTitle] = useState("");
@@ -35,15 +37,30 @@ export default function WritePage() {
     }
     setPrimaryGenreId(existing.genreId);
   };
+  function getCurrentUserIdFromLocalStorage(): number {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No token found");
 
+    const payload = JSON.parse(atob(token.split('.')[1])); // decode JWT payload
+    return payload.userId;  // Stelle sicher, dass dein JWT UserID enthält!
+  }
   const handleSave = async () => {
     if (!primaryGenreId) {
-      alert("Please enter a primary genre.");
+      alert("Please select a primary genre.");
       return;
     }
 
+    // JWT Token auslesen
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You need to be logged in to create a book.");
+      return;
+    }
+
+    // 1. Buch erstellen
     const book = await adminApi.books.create({ title, content });
 
+    // 2. Genre zuweisen
     await adminApi.bookGenres.link({
       bookId: book.bookId,
       genreId: primaryGenreId,
@@ -58,7 +75,17 @@ export default function WritePage() {
       });
     }
 
-    alert("Book saved!");
+    // 3. Interaction WRITE speichern
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const userId = payload.id;  // falls du id im Token speicherst (alternativ username)
+
+    await adminApi.interactions.create({
+      user: { userId: userId },
+      book: { bookId: book.bookId },
+      action: "WRITE"
+    });
+
+    alert("Book successfully created!");
   };
 
   const callMistral = async () => {

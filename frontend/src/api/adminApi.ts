@@ -2,6 +2,11 @@
 import { apiFetch } from "./fetchClient";
 
 export const adminApi = {
+  interactions: {
+    list: () => apiFetch("/interaction/all"),
+    delete: (id: number) => apiFetch(`/interaction/delete/${id}`, { method: "DELETE" }),
+    getAuthors: (bookId: number) => apiFetch(`/interaction/authors/${bookId}`),  // NEU
+  },
   books: {
     list: () => apiFetch("/book/all"),
     get: (id: number) => apiFetch(`/book/${id}`),
@@ -15,9 +20,12 @@ export const adminApi = {
     create: (data: { genreName: string }) => apiFetch("/genre/create", { method: "POST", body: JSON.stringify(data) }),
     delete: (id: number) => apiFetch(`/genre/delete/${id}`, { method: "DELETE" }),
   },
+
   bookGenres: {
-    link: (data: { bookId: number, genreId: number, type: string }) =>
+    list: () => apiFetch("/bookgenre/all"),
+    link: (data: { bookId: number; genreId: number; type: string }) =>
       apiFetch("/bookgenre/link", { method: "POST", body: JSON.stringify(data) }),
+    unlink: (id: number) => apiFetch(`/bookgenre/unlink/${id}`, { method: "DELETE" }),
   },
   // ... analog für users, interactions, bookGenres
   users: {
@@ -29,11 +37,8 @@ export const adminApi = {
   },
   interactions: {
     list: () => apiFetch("/interaction/all"),
-    delete: (id: number) => apiFetch(`/interaction/delete/${id}`, { method: "DELETE" }),
-  },
-  bookGenres: {
-    list: () => apiFetch("/bookgenre/all"),
-    link: (data: any) => apiFetch("/bookgenre/link", data),
-    unlink: (id: number) => apiFetch(`/bookgenre/unlink/${id}`, { method: "DELETE" }),
+    create: (data: { userId: number; bookId: number; action: string }) =>
+      apiFetch("/interaction/create", { method: "POST", body: JSON.stringify(data) }),
+    getAuthors: (bookId: number) => apiFetch(`/interaction/authors/${bookId}`),
   },
 }
